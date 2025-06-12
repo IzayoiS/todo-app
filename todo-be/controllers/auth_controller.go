@@ -1,6 +1,7 @@
 package controllers
 
 import (
+	"todo/database"
 	"todo/services"
 	"todo/utils"
 
@@ -55,4 +56,20 @@ func Login(c *fiber.Ctx) error {
 		"token": token,
 		"user":  user,
 	})
+}
+
+func CheckUser(c *fiber.Ctx) error {
+	userId, err := getUserID(c)
+	if err != nil {
+		return c.Status(fiber.StatusUnauthorized).JSON(fiber.Map{"error": err.Error()})
+	}
+
+	user, err := services.CheckUser(database.DB, userId)
+	if err != nil {
+		return c.Status(fiber.StatusNotFound).JSON(fiber.Map{
+			"error": "User not found",
+		})
+	}
+
+	return c.JSON(user)
 }

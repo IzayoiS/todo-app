@@ -53,3 +53,11 @@ func LoginUser(email, password string) (*models.User, error) {
 
 	return &user, nil
 }
+
+func CheckUser(db *gorm.DB, id uint) (*models.User, error) {
+	var user models.User
+	if err := db.First(&user, id).Error; err != nil {
+		return nil, err
+	}
+	return &user, nil
+}
