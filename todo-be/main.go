@@ -22,6 +22,10 @@ func main() {
 	
 	routes.TodoRoute(app)
 	routes.AuthRoute(app)
+
+	app.Get("/", func(c *fiber.Ctx) error {
+		return c.SendString("Hello, World!")
+	})
 	
 	port := os.Getenv("PORT")
 	
