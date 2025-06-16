@@ -53,7 +53,7 @@ export default function AddTodoPage({ onSuccess }: { onSuccess?: () => void }) {
         />
         <Button
           type="submit"
-          className="bg-green-500 text-white px-4 py-2 cursor-pointer"
+          className="bg-green-500 text-white px-4 py-2 cursor-pointer w-full"
           disabled={isPending}
         >
           {isPending ? (

@@ -11,13 +11,14 @@ import { Todo, useDeleteTodo, useTodos, useToggleTodo } from "@/hooks/useTodo";
 import { Check, Loader2, Plus, Trash2, X } from "lucide-react";
 import { useState } from "react";
 import AddTodoPage from "./components/addTodo";
-import TodoDetailPage from "./[id]/page";
 
 export default function TodosPage() {
   const { data: todos, isLoading } = useTodos();
   const toggle = useToggleTodo();
   const remove = useDeleteTodo();
   const [isAddDialogOpen, setIsAddDialogOpen] = useState(false);
+  const completedTodos = todos?.filter((todo) => todo.completed) || [];
+  const incompleteTodos = todos?.filter((todo) => !todo.completed) || [];
 
   const handleLogout = () => {
     localStorage.removeItem("token");
@@ -61,7 +62,7 @@ export default function TodosPage() {
       </div>
 
       <div className="space-y-3">
-        {todos?.map((todo: Todo) => (
+        {incompleteTodos?.map((todo: Todo) => (
           <Card key={todo.id} className="p-4 hover:shadow-md transition-shadow">
             <div className="flex items-center justify-between">
               <div className="flex items-center space-x-3">
@@ -79,23 +80,15 @@ export default function TodosPage() {
                     <X className="h-5 w-5" />
                   )}
                 </Button>
-                <Dialog>
-                  <DialogTrigger>
-                    <Button
-                      className={`text-left text-lg bg-white cursor-pointer hover:bg-white ${
-                        todo.completed
-                          ? "line-through text-gray-400"
-                          : "text-gray-800"
-                      }`}
-                    >
-                      {todo.title}
-                    </Button>
-                  </DialogTrigger>
-                  <DialogContent className="sm:max-w-[425px]">
-                    <DialogTitle>Todo Detail</DialogTitle>
-                    <TodoDetailPage />
-                  </DialogContent>
-                </Dialog>
+                <Button
+                  className={`text-left text-lg bg-white hover:bg-white ${
+                    todo.completed
+                      ? "line-through text-gray-400"
+                      : "text-gray-800"
+                  }`}
+                >
+                  {todo.title}
+                </Button>
               </div>
               <div className="flex space-x-2">
                 <Button
@@ -111,6 +104,39 @@ export default function TodosPage() {
           </Card>
         ))}
       </div>
+
+      {completedTodos.length > 0 && (
+        <div className="mt-6">
+          <h2 className="text-xl font-semibold text-gray-600 mb-2">DONE</h2>
+          <div className="space-y-3">
+            {completedTodos.map((todo) => (
+              <Card key={todo.id} className="p-4 bg-gray-100">
+                <div className="flex items-center justify-between">
+                  <div className="flex items-center space-x-3">
+                    <Button
+                      onClick={() => toggle.mutate(todo.id)}
+                      className="p-2 rounded-full bg-green-100 text-green-600"
+                    >
+                      <Check className="h-5 w-5" />
+                    </Button>
+                    <span className="text-lg text-gray-400 line-through">
+                      {todo.title}
+                    </span>
+                  </div>
+                  <Button
+                    variant="ghost"
+                    size="icon"
+                    onClick={() => remove.mutate(todo.id)}
+                    className="text-gray-500 hover:text-red-500 cursor-pointer"
+                  >
+                    <Trash2 className="h-4 w-4" />
+                  </Button>
+                </div>
+              </Card>
+            ))}
+          </div>
+        </div>
+      )}
     </div>
   );
 }
