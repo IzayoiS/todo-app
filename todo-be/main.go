@@ -2,7 +2,6 @@ package main
 
 import (
 	"os"
-	"todo/config"
 	"todo/database"
 	"todo/routes"
 
@@ -12,7 +11,6 @@ import (
 
 func main() {
 	app := fiber.New()
-	config.LoadEnv()
 	database.Connect()
 
 	app.Use(cors.New(cors.Config{
