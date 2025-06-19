@@ -1,4 +1,5 @@
 import { create } from "zustand";
+import Cookies from "js-cookie";
 
 type User = {
   id: string;
@@ -21,12 +22,19 @@ export const useAuth = create<AuthState>((set) => ({
   login: (user, token) => {
     localStorage.setItem("token", token);
     localStorage.setItem("userId", user.id);
+    Cookies.set("token", token, {
+      expires: 1,
+      path: "/",
+      secure: process.env.NODE_ENV === "production",
+      sameSite: "Lax",
+    });
     set({ user, token });
   },
 
   logout: () => {
     localStorage.removeItem("token");
     localStorage.removeItem("userId");
+    Cookies.remove("token");
     set({ user: null, token: null });
   },
 

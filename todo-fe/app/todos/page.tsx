@@ -11,24 +11,26 @@ import { Todo, useDeleteTodo, useTodos, useToggleTodo } from "@/hooks/useTodo";
 import { Check, Loader2, Plus, Trash2, X } from "lucide-react";
 import { useState } from "react";
 import AddTodoPage from "./components/addTodo";
+import { useAuth } from "@/store/user";
 
 export default function TodosPage() {
   const { data: todos, isLoading } = useTodos();
   const toggle = useToggleTodo();
   const remove = useDeleteTodo();
+  const { logout } = useAuth();
   const [isAddDialogOpen, setIsAddDialogOpen] = useState(false);
   const completedTodos = todos?.filter((todo) => todo.completed) || [];
   const incompleteTodos = todos?.filter((todo) => !todo.completed) || [];
 
   const handleLogout = () => {
-    localStorage.removeItem("token");
+    logout();
     window.location.href = "/";
   };
 
   if (isLoading) {
     return (
-      <div className="flex justify-center items-center h-[calc(100vh-200px)]">
-        <Loader2 className="h-8 w-8 animate-spin text-primary" />
+      <div className="flex justify-center items-center h-screen">
+        <Loader2 className="h-10 w-10 animate-spin text-primary" />
       </div>
     );
   }
@@ -65,7 +67,7 @@ export default function TodosPage() {
         {incompleteTodos?.map((todo: Todo) => (
           <Card key={todo.id} className="p-4 hover:shadow-md transition-shadow">
             <div className="flex items-center justify-between">
-              <div className="flex items-center space-x-3">
+              <div className="flex items-center">
                 <Button
                   onClick={() => toggle.mutate(todo.id)}
                   className={`p-2 rounded-full cursor-pointer ${
@@ -90,7 +92,7 @@ export default function TodosPage() {
                   {todo.title}
                 </Button>
               </div>
-              <div className="flex space-x-2">
+              <div>
                 <Button
                   variant="ghost"
                   size="icon"
@@ -115,7 +117,7 @@ export default function TodosPage() {
                   <div className="flex items-center space-x-3">
                     <Button
                       onClick={() => toggle.mutate(todo.id)}
-                      className="p-2 rounded-full bg-green-100 text-green-600"
+                      className="p-2 rounded-full bg-green-100 text-green-600 cursor-pointer"
                     >
                       <Check className="h-5 w-5" />
                     </Button>
