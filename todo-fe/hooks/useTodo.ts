@@ -1,5 +1,6 @@
+import { api } from "@/utils/api";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
-import api from "@/utils/api";
+import { toast } from "sonner";
 
 export type Todo = {
   id: number;
@@ -32,6 +33,7 @@ export function useAddTodo() {
   return useMutation({
     mutationFn: async (data: { title: string; completed?: boolean }) => {
       const res = await api.post("/todo", data, getAuthHeaders());
+      toast(res.data.message);
       return res.data;
     },
     onSuccess: () => {
@@ -44,7 +46,8 @@ export function useToggleTodo() {
   const queryClient = useQueryClient();
   return useMutation({
     mutationFn: async (id: number) => {
-      await api.patch(`/todo/${id}`, {}, getAuthHeaders());
+      const res = await api.patch(`/todo/${id}`, {}, getAuthHeaders());
+      toast(res.data.message);
     },
     onSuccess: async (_, id) => {
       queryClient.invalidateQueries({ queryKey: ["todo"] });
@@ -57,7 +60,8 @@ export function useDeleteTodo() {
   const queryClient = useQueryClient();
   return useMutation({
     mutationFn: async (id: number) => {
-      await api.delete(`/todo/${id}`, getAuthHeaders());
+      const res = await api.delete(`/todo/${id}`, getAuthHeaders());
+      toast(res.data.message);
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["todo"] });

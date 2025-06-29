@@ -8,19 +8,19 @@ import {
   DialogTrigger,
 } from "@/components/ui/dialog";
 import { Todo, useDeleteTodo, useTodos, useToggleTodo } from "@/hooks/useTodo";
+import { useTodo } from "@/store/user";
 import { Check, Loader2, Plus, Trash2, X } from "lucide-react";
 import { useState } from "react";
 import AddTodoPage from "./components/addTodo";
-import { useAuth } from "@/store/user";
 
 export default function TodosPage() {
   const { data: todos, isLoading } = useTodos();
   const toggle = useToggleTodo();
   const remove = useDeleteTodo();
-  const { logout } = useAuth();
   const [isAddDialogOpen, setIsAddDialogOpen] = useState(false);
   const completedTodos = todos?.filter((todo) => todo.completed) || [];
   const incompleteTodos = todos?.filter((todo) => !todo.completed) || [];
+  const { logout } = useTodo();
 
   const handleLogout = () => {
     logout();

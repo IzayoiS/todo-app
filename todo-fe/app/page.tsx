@@ -3,8 +3,8 @@
 import { AlertDescription } from "@/components/ui/alert";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { useAuth } from "@/store/user";
-import api from "@/utils/api";
+import { useTodo } from "@/store/user";
+import { api } from "@/utils/api";
 import { LoginSchema, LoginSchemaDTO } from "@/utils/schemas/auth.schema";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { isAxiosError } from "axios";
@@ -17,9 +17,8 @@ import { toast } from "sonner";
 
 export default function LoginPage() {
   const router = useRouter();
-  const { login } = useAuth();
   const [isSubmitting, setIsSubmitting] = useState(false);
-
+  const { setUT } = useTodo();
   const {
     register,
     handleSubmit,
@@ -38,15 +37,16 @@ export default function LoginPage() {
       });
 
       const { token, user } = response.data;
-      login(
-        {
+      setUT({
+        user: {
           id: user.ID,
           username: user.Name,
           email: user.Email,
         },
-        token
-      );
+        token,
+      });
 
+      setUT(response.data);
       toast("Login success!");
       router.push("/todos");
     } catch (error) {
@@ -55,8 +55,9 @@ export default function LoginPage() {
         console.error("Axios login error", error);
         return toast(message);
       }
-
       toast("Something went wrong");
+    } finally {
+      setIsSubmitting(false);
     }
   }
 
